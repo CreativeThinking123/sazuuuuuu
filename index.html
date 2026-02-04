@@ -1,87 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Surprise 💖</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LOVE.exe</title>
 
 <style>
 body{
   margin:0;
-  height:100vh;
-  display:flex;
+  background:#000;
+  color:#00ff9c;
+  font-family:monospace;
+  overflow:hidden;
+  text-align:center;
+}
+
+/* TERMINAL */
+#terminal{
+  padding:20px;
+  white-space:pre-line;
+  font-size:16px;
+}
+
+/* SCENES */
+.scene{
+  position:absolute;
+  inset:0;
+  display:none;
   align-items:center;
   justify-content:center;
-  background:radial-gradient(circle at top,#1a1a1a,#000);
-  color:white;
-  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-  text-align:center;
-  overflow:hidden;
+  flex-direction:column;
 }
-
-/* CONTAINER */
-.container{
-  animation:fadeIn 1.4s ease forwards;
-}
-
-h1{
-  font-size:2.3rem;
-  margin-bottom:20px;
-  animation:slideUp 1.2s ease forwards;
-}
-
-.buttons{
-  margin-top:20px;
-  position:relative;
-}
+.scene.active{display:flex}
 
 /* BUTTONS */
 button{
-  padding:14px 34px;
-  font-size:18px;
+  padding:12px 26px;
   border:none;
   border-radius:30px;
+  font-size:18px;
+  cursor:pointer;
   background:#ff4d6d;
   color:white;
-  cursor:pointer;
   margin:10px;
-  transition:transform .3s ease, opacity .3s ease;
 }
 
 /* MESSAGE */
-#message{
-  margin-top:20px;
-  font-size:1.1rem;
+#msg{
+  margin-top:15px;
   color:#ffd1dc;
-  min-height:24px;
 }
 
 /* IMAGE */
-#surprise{
-  display:none;
-  flex-direction:column;
-  align-items:center;
-  animation:fadeIn 1.5s ease forwards;
-}
-
 img{
   width:90%;
   max-width:420px;
   border-radius:18px;
   margin-top:20px;
   box-shadow:0 25px 70px rgba(0,0,0,0.7);
-  animation:zoomIn 1.6s ease forwards;
+  animation: zoomIn 1.5s ease forwards;
 }
 
-/* ANIMATIONS */
-@keyframes fadeIn{
-  from{opacity:0}
-  to{opacity:1}
+/* HEART CANVAS */
+canvas{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
 }
-@keyframes slideUp{
-  from{opacity:0;transform:translateY(30px)}
-  to{opacity:1;transform:translateY(0)}
-}
+
 @keyframes zoomIn{
   from{opacity:0;transform:scale(.9)}
   to{opacity:1;transform:scale(1)}
@@ -91,53 +77,161 @@ img{
 
 <body>
 
-<div class="container" id="questionBox">
-  <h1>Do you want a surprise? 💖</h1>
+<canvas id="c"></canvas>
 
-  <div class="buttons">
-    <button onclick="showSurprise()">YES</button>
-    <button id="noBtn" onmouseover="runNo()">NO</button>
+<!-- SCENE 1 : TERMINAL -->
+<div id="terminal" class="scene active"></div>
+
+<!-- SCENE 2 : VALENTINE QUESTION -->
+<div id="question" class="scene">
+  <h1>Hemaa ❤️</h1>
+  <p>Sazu has one important question for you…</p>
+  <h2>Will you be my Valentine?</h2>
+  <div>
+    <button onclick="yesValentine()">YES</button>
+    <button id="noBtn" onmouseover="escapeNo()">NO</button>
   </div>
-
-  <div id="message"></div>
 </div>
 
-<div id="surprise">
-  <h1>Surprise ✨</h1>
+<!-- SCENE 3 : CONFIRM -->
+<div id="final" class="scene">
+  <h1>Thank you, Hemaa 💖</h1>
+  <p>System status: ❤️ HEART LOCKED 🔐</p>
+  <button onclick="showSurpriseQ()">Continue</button>
+</div>
+
+<!-- SCENE 4 : SURPRISE QUESTION -->
+<div id="surpriseQ" class="scene">
+  <h2>Do you want a surprise? 😏</h2>
+  <div>
+    <button onclick="revealImage()">YES</button>
+    <button onmouseover="funnyNo()">NO</button>
+  </div>
+  <div id="msg"></div>
+</div>
+
+<!-- SCENE 5 : IMAGE REVEAL -->
+<div id="imageScene" class="scene">
+  <h2>Just for you 💖</h2>
   <img src="memory.jpeg" alt="Surprise Image">
 </div>
 
 <script>
-const funnyMessages = [
-  "Nice try 😄",
-  "That button won’t work today 😜",
-  "You know you’re curious 😉",
-  "NO is just an illusion 😏",
-  "System error: NO not allowed ❌",
-  "Come on… click YES already 😇",
-  "I dare you to click YES 😎"
+/* ================== PERSONAL INFO ================== */
+const boyName="Sazu";
+const girlName="Hemaa";
+
+/* ================== TERMINAL BOOT ================== */
+const lines=[
+  "Initializing LOVE.exe...",
+  "Loading emotional modules...",
+  "",
+  `User detected: ${girlName}`,
+  "Access level: FULL ✔",
+  "",
+  `Primary process started by: ${boyName}`,
+  "Verifying heart availability...",
+  "",
+  "ERROR: Heart already reserved",
+  "",
+  "Override protocol engaged...",
+  "Reason: Genuine feelings detected",
+  "",
+  "Launching Valentine module..."
 ];
 
-/* NO BUTTON ESCAPE */
-function runNo(){
-  const btn = document.getElementById("noBtn");
-  btn.style.position = "absolute";
-  btn.style.left = Math.random()*70 + "vw";
-  btn.style.top = Math.random()*60 + "vh";
+let i=0;
+const terminal=document.getElementById("terminal");
 
-  document.getElementById("message").textContent =
-    funnyMessages[Math.floor(Math.random()*funnyMessages.length)];
+function boot(){
+  if(i<lines.length){
+    terminal.textContent+=lines[i]+"\n";
+    i++;
+    setTimeout(boot,600);
+  }else{
+    setTimeout(()=>showScene("question"),1000);
+  }
+}
+boot();
+
+/* ================== SCENE CONTROL ================== */
+function showScene(id){
+  document.querySelectorAll(".scene")
+    .forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
-/* YES FLOW */
-function showSurprise(){
-  const box = document.getElementById("questionBox");
-  box.style.opacity = 0;
+/* ================== NO BUTTON ESCAPE ================== */
+function escapeNo(){
+  const btn=document.getElementById("noBtn");
+  btn.style.position="absolute";
+  btn.style.left=Math.random()*80+"vw";
+  btn.style.top=Math.random()*80+"vh";
+}
 
-  setTimeout(()=>{
-    box.style.display = "none";
-    document.getElementById("surprise").style.display = "flex";
-  },600);
+/* ================== VALENTINE YES ================== */
+function yesValentine(){
+  startHearts();
+  showScene("final");
+}
+
+/* ================== SURPRISE FLOW ================== */
+function showSurpriseQ(){
+  showScene("surpriseQ");
+}
+
+const funnyMsgs=[
+  "Nice try 😄",
+  "NO is not allowed today 😜",
+  "You’re getting curious 😉",
+  "System says YES only 😏",
+  "Error 404: NO not found ❌"
+];
+
+function funnyNo(){
+  document.getElementById("msg").textContent =
+    funnyMsgs[Math.floor(Math.random()*funnyMsgs.length)];
+}
+
+function revealImage(){
+  showScene("imageScene");
+}
+
+/* ================== HEART PARTICLES ================== */
+const canvas=document.getElementById("c");
+const ctx=canvas.getContext("2d");
+
+function resize(){
+  canvas.width=innerWidth;
+  canvas.height=innerHeight;
+}
+resize(); window.onresize=resize;
+
+let hearts=[];
+
+function startHearts(){
+  hearts=[];
+  for(let i=0;i<60;i++){
+    hearts.push({
+      x:Math.random()*canvas.width,
+      y:canvas.height+Math.random()*200,
+      s:Math.random()*2+1,
+      r:Math.random()*6+4
+    });
+  }
+  animate();
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  hearts.forEach(h=>{
+    h.y-=h.s;
+    ctx.fillStyle="rgba(255,77,109,0.85)";
+    ctx.beginPath();
+    ctx.arc(h.x,h.y,h.r,0,Math.PI*2);
+    ctx.fill();
+  });
+  requestAnimationFrame(animate);
 }
 </script>
 
