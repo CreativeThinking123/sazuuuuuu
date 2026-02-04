@@ -19,23 +19,127 @@ body{
   overflow:hidden;
 }
 
-/* MAIN BOX */
+/* CONTAINER */
 .container{
-  animation:fadeIn 1.5s ease forwards;
+  animation:fadeIn 1.4s ease forwards;
 }
 
 h1{
-  font-size:2.2rem;
+  font-size:2.3rem;
   margin-bottom:20px;
   animation:slideUp 1.2s ease forwards;
 }
 
 .buttons{
   margin-top:20px;
+  position:relative;
 }
 
 /* BUTTONS */
 button{
   padding:14px 34px;
   font-size:18px;
-  border:none
+  border:none;
+  border-radius:30px;
+  background:#ff4d6d;
+  color:white;
+  cursor:pointer;
+  margin:10px;
+  transition:transform .3s ease, opacity .3s ease;
+}
+
+/* MESSAGE */
+#message{
+  margin-top:20px;
+  font-size:1.1rem;
+  color:#ffd1dc;
+  min-height:24px;
+}
+
+/* IMAGE */
+#surprise{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  animation:fadeIn 1.5s ease forwards;
+}
+
+img{
+  width:90%;
+  max-width:420px;
+  border-radius:18px;
+  margin-top:20px;
+  box-shadow:0 25px 70px rgba(0,0,0,0.7);
+  animation:zoomIn 1.6s ease forwards;
+}
+
+/* ANIMATIONS */
+@keyframes fadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes zoomIn{
+  from{opacity:0;transform:scale(.9)}
+  to{opacity:1;transform:scale(1)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="questionBox">
+  <h1>Do you want a surprise? 💖</h1>
+
+  <div class="buttons">
+    <button onclick="showSurprise()">YES</button>
+    <button id="noBtn" onmouseover="runNo()">NO</button>
+  </div>
+
+  <div id="message"></div>
+</div>
+
+<div id="surprise">
+  <h1>Surprise ✨</h1>
+  <img src="memory.jpeg" alt="Surprise Image">
+</div>
+
+<script>
+const funnyMessages = [
+  "Nice try 😄",
+  "That button won’t work today 😜",
+  "You know you’re curious 😉",
+  "NO is just an illusion 😏",
+  "System error: NO not allowed ❌",
+  "Come on… click YES already 😇",
+  "I dare you to click YES 😎"
+];
+
+/* NO BUTTON ESCAPE */
+function runNo(){
+  const btn = document.getElementById("noBtn");
+  btn.style.position = "absolute";
+  btn.style.left = Math.random()*70 + "vw";
+  btn.style.top = Math.random()*60 + "vh";
+
+  document.getElementById("message").textContent =
+    funnyMessages[Math.floor(Math.random()*funnyMessages.length)];
+}
+
+/* YES FLOW */
+function showSurprise(){
+  const box = document.getElementById("questionBox");
+  box.style.opacity = 0;
+
+  setTimeout(()=>{
+    box.style.display = "none";
+    document.getElementById("surprise").style.display = "flex";
+  },600);
+}
+</script>
+
+</body>
+</html>
