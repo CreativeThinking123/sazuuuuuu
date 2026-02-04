@@ -12,83 +12,30 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  background:#000;
+  background:radial-gradient(circle at top,#1a1a1a,#000);
   color:white;
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
   text-align:center;
+  overflow:hidden;
 }
 
+/* MAIN BOX */
+.container{
+  animation:fadeIn 1.5s ease forwards;
+}
+
+h1{
+  font-size:2.2rem;
+  margin-bottom:20px;
+  animation:slideUp 1.2s ease forwards;
+}
+
+.buttons{
+  margin-top:20px;
+}
+
+/* BUTTONS */
 button{
-  padding:14px 32px;
+  padding:14px 34px;
   font-size:18px;
-  border:none;
-  border-radius:30px;
-  background:#ff4d6d;
-  color:white;
-  cursor:pointer;
-  margin:10px;
-}
-
-#surprise{
-  display:none;
-  flex-direction:column;
-  align-items:center;
-}
-
-#message{
-  margin-top:20px;
-  font-size:1.1rem;
-  color:#ffd1dc;
-}
-
-img{
-  width:90%;
-  max-width:400px;
-  border-radius:16px;
-  margin-top:20px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.6);
-}
-</style>
-</head>
-
-<body>
-
-<div id="question">
-  <h1>Do you want a surprise? 💖</h1>
-  <button onclick="showSurprise()">YES</button>
-  <button onclick="noClicked()">NO</button>
-
-  <div id="message"></div>
-</div>
-
-<div id="surprise">
-  <h1>For you 💕</h1>
-  <img src="memory.jpeg" alt="Surprise image">
-</div>
-
-<script>
-const funnyMessages = [
-  "Come on… don’t be shy 😄",
-  "That NO button is just for decoration 🙈",
-  "Nice try… but the surprise is too good 😏",
-  "You know you’re curious 😉",
-  "Plot twist: YES is the only option 😜",
-  "Error 404: NO not accepted ❌",
-  "At least try clicking YES once 😇"
-];
-
-function showSurprise(){
-  document.getElementById("question").style.display="none";
-  document.getElementById("surprise").style.display="flex";
-}
-
-function noClicked(){
-  const msg = funnyMessages[
-    Math.floor(Math.random() * funnyMessages.length)
-  ];
-  document.getElementById("message").textContent = msg;
-}
-</script>
-
-</body>
-</html>
+  border:none
