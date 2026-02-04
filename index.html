@@ -1,182 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>LOVE.exe</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surprise 💖</title>
 
 <style>
 body{
   margin:0;
-  background:#000;
-  color:#00ff9c;
-  font-family:monospace;
-  overflow:hidden;
-}
-
-/* TERMINAL */
-#terminal{
-  padding:20px;
-  white-space:pre-line;
-  font-size:16px;
-}
-
-/* SCENES */
-.scene{
-  position:absolute;
-  inset:0;
-  display:none;
+  height:100vh;
+  display:flex;
   align-items:center;
   justify-content:center;
-  flex-direction:column;
+  background:#000;
+  color:white;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
   text-align:center;
 }
-.scene.active{display:flex}
 
-/* BUTTONS */
 button{
-  padding:12px 26px;
+  padding:14px 32px;
+  font-size:18px;
   border:none;
   border-radius:30px;
-  font-size:18px;
-  cursor:pointer;
   background:#ff4d6d;
   color:white;
+  cursor:pointer;
   margin:10px;
 }
 
-/* HEART PARTICLES */
-canvas{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
+#surprise{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+}
+
+#message{
+  margin-top:20px;
+  font-size:1.1rem;
+  color:#ffd1dc;
+}
+
+img{
+  width:90%;
+  max-width:400px;
+  border-radius:16px;
+  margin-top:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
 }
 </style>
 </head>
 
 <body>
 
-<canvas id="c"></canvas>
+<div id="question">
+  <h1>Do you want a surprise? 💖</h1>
+  <button onclick="showSurprise()">YES</button>
+  <button onclick="noClicked()">NO</button>
 
-<!-- SCENE 1 : TERMINAL -->
-<div id="terminal" class="scene active"></div>
-
-<!-- SCENE 2 : QUESTION -->
-<div id="question" class="scene">
-  <h1>Hemaa ❤️</h1>
-  <p>Sazu has one important question for you…</p>
-  <h2>Will you be my Valentine?</h2>
-  <div>
-    <button onclick="yes()">YES</button>
-    <button id="noBtn" onmouseover="escapeNo()">NO</button>
-  </div>
+  <div id="message"></div>
 </div>
 
-<!-- SCENE 3 : FINAL -->
-<div id="final" class="scene">
-  <h1>Thank you, Hemaa 💖</h1>
-  <p>Valentine confirmed.</p>
-  <p><strong>Sazu & Hemaa</strong></p>
-  <p>System status: ❤️ HEART LOCKED 🔐</p>
+<div id="surprise">
+  <h1>For you 💕</h1>
+  <img src="memory.jpeg" alt="Surprise image">
 </div>
 
 <script>
-/* ================== PERSONAL INFO ================== */
-const boyName = "Sazu";
-const girlName = "Hemaa";
-
-/* ================== TERMINAL BOOT ================== */
-const lines = [
-  "Initializing LOVE.exe...",
-  "Loading emotional modules...",
-  "",
-  `User detected: ${girlName}`,
-  "Access level: FULL ✔",
-  "",
-  `Primary process started by: ${boyName}`,
-  "Verifying heart availability...",
-  "",
-  "ERROR: Heart already reserved",
-  "",
-  "Override protocol engaged...",
-  "Reason: Genuine feelings detected",
-  "",
-  "Launching Valentine module..."
+const funnyMessages = [
+  "Come on… don’t be shy 😄",
+  "That NO button is just for decoration 🙈",
+  "Nice try… but the surprise is too good 😏",
+  "You know you’re curious 😉",
+  "Plot twist: YES is the only option 😜",
+  "Error 404: NO not accepted ❌",
+  "At least try clicking YES once 😇"
 ];
 
-let i=0;
-const terminal=document.getElementById("terminal");
-
-function boot(){
-  if(i<lines.length){
-    terminal.textContent+=lines[i]+"\n";
-    i++;
-    setTimeout(boot,600);
-  }else{
-    setTimeout(()=>{
-      showScene("question");
-    },1000);
-  }
-}
-boot();
-
-/* ================== SCENE CONTROL ================== */
-function showScene(id){
-  document.querySelectorAll(".scene")
-    .forEach(s=>s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+function showSurprise(){
+  document.getElementById("question").style.display="none";
+  document.getElementById("surprise").style.display="flex";
 }
 
-/* ================== NO BUTTON ESCAPE ================== */
-function escapeNo(){
-  const btn=document.getElementById("noBtn");
-  btn.style.position="absolute";
-  btn.style.left=Math.random()*80+"vw";
-  btn.style.top=Math.random()*80+"vh";
-}
-
-/* ================== YES FLOW ================== */
-function yes(){
-  startHearts();
-  showScene("final");
-}
-
-/* ================== HEART PARTICLE ENGINE ================== */
-const canvas=document.getElementById("c");
-const ctx=canvas.getContext("2d");
-
-function resize(){
-  canvas.width=innerWidth;
-  canvas.height=innerHeight;
-}
-resize();
-window.onresize=resize;
-
-let hearts=[];
-
-function startHearts(){
-  hearts=[];
-  for(let i=0;i<70;i++){
-    hearts.push({
-      x:Math.random()*canvas.width,
-      y:canvas.height+Math.random()*200,
-      s:Math.random()*2+1,
-      r:Math.random()*6+4
-    });
-  }
-  animate();
-}
-
-function animate(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  hearts.forEach(h=>{
-    h.y-=h.s;
-    ctx.fillStyle="rgba(255,77,109,0.85)";
-    ctx.beginPath();
-    ctx.arc(h.x,h.y,h.r,0,Math.PI*2);
-    ctx.fill();
-  });
-  requestAnimationFrame(animate);
+function noClicked(){
+  const msg = funnyMessages[
+    Math.floor(Math.random() * funnyMessages.length)
+  ];
+  document.getElementById("message").textContent = msg;
 }
 </script>
 
